@@ -18,16 +18,15 @@ const ask = (client) => {
     const { cmd, msg } = parseInput(input);
     switch (cmd) {
       case 'ls':
-        console.log('Requesting file list...');
+        console.log('Remote file list:');
         client.write('ls');
-        ask(client);
         break;
       case 'dl':
-        console.log('Downloading...');
+        console.log('Downloading:');
         client.write(msg);
         ask(client);
         break;
-      case 'end':
+      case 'exit':
         rl.close();
         client.end();
         break;
@@ -52,8 +51,14 @@ client.connect(port, hostname, () => {
   ask(client);
 });
 
-client.on('data', (data) => console.log(`From server: ${data}`));
-
 client.on('close', () => console.log('Connection closed'));
 
 client.on('error', () => console.log('Connection failed'));
+
+client.on('data', (data) => {
+  const msg = data.toString();
+  const cmd = msg.slice(0, 2);
+  const files = msg.slice(3).split(',').sort();
+  files.forEach((file) => console.log(`  ${file}`));
+  ask(client);
+});
