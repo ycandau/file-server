@@ -6,7 +6,7 @@ const [port, hostname] = [3000, 'localhost'];
 const processMessage = (socket, cmd, args) => {
   switch (cmd) {
     case 'ls':
-      fs.readdir('.', (error, files) => {
+      fs.readdir('./files/', (error, files) => {
         if (error) return console.log(error);
         return socket.write(`ls:${files.join(',')}`);
       });
