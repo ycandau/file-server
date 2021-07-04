@@ -7,19 +7,27 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+const parseInput = (input) => {
+  const msg = input.trim().replace(/ +/g, ' ');
+  const [cmd] = msg.split(' ');
+  return { cmd, msg };
+};
+
 const ask = (client) => {
-  rl.question('> ', (answer) => {
-    switch (answer) {
+  rl.question('> ', (input) => {
+    const { cmd, msg } = parseInput(input);
+    switch (cmd) {
       case 'ls':
-        console.log('ls');
+        console.log('Requesting file list...');
+        client.write('ls');
         ask(client);
         break;
       case 'dl':
-        console.log('dl');
+        console.log('Downloading...');
+        client.write(msg);
         ask(client);
         break;
       case 'end':
-        console.log('end');
         rl.close();
         client.end();
         break;
